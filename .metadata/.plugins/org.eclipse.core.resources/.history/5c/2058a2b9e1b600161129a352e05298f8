@@ -1,0 +1,140 @@
+package platform.game;
+
+import java.awt.event.KeyEvent;
+
+import platform.util.Box;
+import platform.util.Input;
+import platform.util.Output;
+import platform.util.Sprite;
+import platform.util.Vector;
+
+public class Player extends Actor {
+
+	private Vector position, velocity;
+	// public static final int priority = 42;
+	private final int priority = 42;
+	// public static final double SIZE = 0.5;
+	private final double SIZE = 0.5;
+	private boolean colliding;
+
+	// Méthodes:
+	public Player(Vector position, Vector velocity) {
+		if (position == null || velocity == null) {
+			throw new NullPointerException();
+		}
+		this.position = position;
+		this.velocity = velocity;
+	}
+
+	public Vector getPosition() {
+		return position;
+	}
+
+	public Vector getVelocity() {
+		return velocity;
+	}
+
+	@Override
+	public Box getBox() {
+		return new Box(position, SIZE, SIZE);
+	}
+
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public void preUpdate(Input input) {
+		colliding = false;
+	}
+
+	// @Override
+	/*
+	 * public void postUpdate(Input input) { View view = new View(input ,
+	 * output) ; Vector center = new Vector (0.0 ,0.0) ; double radius = 10.0 ;
+	 * view.setTarget(center , radius) ;
+	 * 
+	 * Sprite sprite = loader.getSprite("heart.full") ; // on exprime les
+	 * coordonnées et la taille dans le //nouveau référentiel : Box zone = new
+	 * Box(new Vector (0.0, 0.0), 2, 2) ; // on dessine dans la vue :
+	 * view.drawSprite(sprite , zone) ; }
+	 */
+
+	@Override
+	public void update(Input input) {
+		super.update(input);
+		double delta = input.getDeltaTime();
+		World world = getWorld();
+		// Vector acceleration = world.getGravity();
+		velocity = velocity.add(world.getGravity().mul(delta));
+		position = position.add(velocity.mul(delta));
+
+		double maxSpeed = 4.0;
+
+		if (colliding) {
+			double scale = Math.pow(0.001, input.getDeltaTime());
+			velocity = velocity.mul(scale);
+		}
+
+		if (input.getKeyboardButton(KeyEvent.VK_RIGHT).isDown()) {
+			if (velocity.getX() < maxSpeed) {
+				double increase = 60.0 * input.getDeltaTime();
+				double speed = velocity.getX() + increase;
+				if (speed > maxSpeed)
+					speed = maxSpeed;
+				velocity = new Vector(speed, velocity.getY());
+			}
+		}
+
+		if (input.getKeyboardButton(KeyEvent.VK_LEFT).isDown()) {
+			if (velocity.getX() > -maxSpeed) {
+				double decrease = 60.0 * input.getDeltaTime();
+				double speed = velocity.getX() - decrease;
+				if (speed < -maxSpeed)
+					speed = -maxSpeed;
+				velocity = new Vector(speed, velocity.getY());
+			}
+		}
+
+		if (input.getKeyboardButton(KeyEvent.VK_UP).isPressed() && colliding) {
+			velocity = new Vector(velocity.getX(), 7.0);
+		}
+
+		if (input.getKeyboardButton(KeyEvent.VK_SPACE).isPressed()) {
+			getWorld().register(new Fireball(getPosition(), velocity.add(velocity).resized(2)));
+
+		}
+	}
+
+	@Override
+	public void interact(Actor other) {
+		super.interact(other);
+		if (other.isSolid()) {
+			Vector delta = other.getBox().getCollision(getBox());
+			if (delta != null) {
+				colliding = true;
+				position = position.add(delta);
+				if (delta.getX() != 0.0)
+					velocity = new Vector(0.0, velocity.getY());
+				if (delta.getY() != 0.0)
+					velocity = new Vector(velocity.getX(), 0.0);
+			}
+		}
+	}
+
+	/*
+	 * public void colliding() {
+	 * 
+	 * }
+	 */ // Must probably be removed, but ask Karim to be sure, I do not remember
+		// what this is for
+	public void draw(Input input, Output output) {
+		Sprite sprite = getSprite("blocker.happy");
+		if (sprite == null) {
+			super.draw(input, output);
+		} else {
+			output.drawSprite(sprite, getBox());
+		}
+	}
+}

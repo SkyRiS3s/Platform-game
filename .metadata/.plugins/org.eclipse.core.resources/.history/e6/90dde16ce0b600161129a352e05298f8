@@ -1,0 +1,82 @@
+/*package platform.game;
+
+import platform.util.Box;
+import platform.util.Loader;
+import platform.util.Vector;
+
+*//**
+	* Represents an environment populated by actors.
+	*/
+/*
+public interface World {
+
+@Override
+public void register(Actor actor) {
+registered.add(actor) ;
+}
+
+@Override
+public void unregister(Actor actor) {
+unregistered.add(actor) ;
+}
+
+*//** @return associated loader, not null *//*
+											public Loader getLoader();
+											
+											public Vector getGravity() { 
+											Vector gravity = new Vector(0.0 , -9.81);
+											return gravity;
+											}
+											
+											void setView(Vector center, double radius);
+											
+											// permet d'indiquer que la transition à un autre niveau
+											// doit se faire :
+											public void nextLevel () ;
+											// permet de passer au niveau level :
+											public void setNextLevel(Level level) ;
+											
+											}
+											*/
+package platform.game;
+
+import platform.util.Box;
+import platform.util.Loader;
+import platform.util.Vector;
+import platform.game.level.Level;
+
+
+/**
+ * Represents an environment populated by actors.
+ */
+public interface World {
+
+	/** @return associated loader, not null */
+	public Loader getLoader();
+
+	public void setView(Vector center, double radius);
+
+	public void register(Actor actor);
+
+	public void unregister(Actor actor);
+
+	public default Vector getGravity() {
+		return new Vector(0.0, -9.81);
+	}
+
+	/*
+	 * @Override public static void register(Actor actor) {
+	 * registered.add(actor) ; }
+	 * 
+	 * @Override public void unregister(Actor actor) { unregistered.add(actor) ;
+	 * }
+	 */
+	
+	
+	// permet d'indiquer que la transition à un autre niveau
+	// doit se faire :
+	public void nextLevel();
+
+	// permet de passer au niveau level :
+	public void setNextLevel(Level level);
+}

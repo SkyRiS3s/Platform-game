@@ -1,0 +1,38 @@
+﻿CONCEPTION:
+------------
+
+
+1. Les modifications apportées à l'architecture proposée
+----------------------------------------------------------
+- Nous avons volontairement reféfinies les limites (du niveau) dans Limits.java afin de rendre les limites plus grande. D'autant plus que, pour le level2, par exemple, qui allait suffisamment bas, le son qui s'activait lorsque le joueur se trouvait sur la plateforme la plus basse était celui qui indiquait que le joueur était sur le point d'atteindre la limite (et donc de mourir). Pour résoudre ce problème, on a simplement étendu les limites.
+- Afin de pouvoir mieux viser, on offre au joueur la possibilité d'orienter son fireball en fonction de la position de la souris.
+- On a créé une méthode abstraite "setPlayer()" dans l'interface World qu'on définit dans la classe Simulator. Puis on affecte l'argument player de cette méthode à un attribut player prédéfinit dans simulator. Si l'attribut player n'est pas null, le centre de la vue est égale à la position du player. Ainsi, on garantit que la vue sera centrée sur le player s'il bouge. (C'est à dire que la fireball va là où indique la souris).
+
+
+
+2. Les extensions ajoutées et comment elles s'insèrent dans l'architecture
+-----------------------------------------------------------------------------
+- On a rajouté un acteur "Destructible" (qui est une sous-classe de block) et qui disparaît lorsqu'il subit des dégâts de type FIRE.
+
+- On a codé des ennemis (Slime.java). Pour ce faire, on a dû créer la classe "Alive", qui est la classe-mère de Slime.java ainsi que de Player.java (donc on a aussi fait en sorte que Player.java soit une sous-classe) 
+- On a crée un acteur Bomb.java afin d'offir au joueur la possibilité de lancer des bombes qui causent des dégâts de type AIR et FIRE. A noter qu'on a volontairement laissé au joueur la possibilité de choisir l'orientation de son tir (autrement dit, la bombe va aller là où pointe sa souris).
+- Pour les bombes, on a les active après un temps qu'on a choisi arbitrairement (à savoir 4 secondes).
+- A noter qu'on a fait en sorte qu'il est possible d'activer les bombes si elles reçoivent du dégat FIRE (donc, il est possible de les faire exploser avec une boule de feu).
+- On a volontairement décidé de faire en sorte que les bombes rebondissent moins (car il est difficile de bien s'en servir si elles rebondissent trop). Par conséquent, on a réglé le "bounciness" des bombes à 0.1.
+- On s'est servi de la Bomb.java comme une super-classe afin de créer la classe missile, ainsi que la classe grenade. Le joueur a uniquement la possibilité de lancer des grenades (dont il peut choisir l'orientation avec sa souris). 
+ -Les grenades se collent aux objets solides, ce qu'on a décidé de faire afin de différentier une grenade d'une bombe (parce que, ça revenait à la même chose finalement).
+- On a rajouté la classe Particle pour l'animation des bombes lorsqu'elles explosent (Particle.java est une sous-classe de Actor.java)
+- Afin de bien définir les bombes (ainsi que les missiles et les grenades), on a créé une super-classe, "Projectile" (donc Bomb.java est une sous-classe de projectile). Du coup, comme une boule de feu est aussi un projectile, on a dû faire en sorte que Fireball soit une sous-classe de projectile aussi.
+-Nous avons créé une class Sound dans platform.util permettant de rajouter des sons dans le jeu. Pour ce faire, nous nous sommes fortement inspirés de cette vidéo youtube : https://www.youtube.com/watch?v=VMSTTg5EEnY. Au départ, la classe codée ne marchait pas, nous avons dû supprimer la librairie JRE System Library et la remettre, car apparemment il y avait un bug. Nous avons fait les importations nécessaires et défini une méthode music() et stop(), l’une pour commencer un son, l’autre pour l’arrêter. De même qu’une méthode loop() et une surcharge de stop(), l’une pour jouer en boucle un son, l’autre pour l’arrêter (utilisées dans Bomb, car le temps d’explosion varie).  La première méthode retourne un objet de type AudioStreamData pour pouvoir appeler stop() (comme par exemple dans Missile) . Voici les autres sources utilisées à cette fin : 
+Missiles : https://www.youtube.com/watch?v=3m3-pWH5wOw
+Bombes : https://www.youtube.com/watch?v=6P8ZXtBPmYk
+Autres : http://www.themushroomkingdom.net/wav.shtml
+
+
+
+3. Le comportement attribué à certain des composants introduits (ceux qui ont été modifié)
+---------------------------------------------------------------------------------------------
+- La "grenade", qui est une sous-classe de bombe, nous avons décidé de la rendre collante pour la différencier de la bombe classique (il s'agissait plus ou moins de la même arme. En faisant en sorte qu'on puisse coller les grenades sur un actor solide, on offre au joueur plus de possibilités pour se débarasser de ses ennemis ou de détruire des acteurs "destructibles").
+- Afin de pouvoir choisir la taille et la vie des slimes lors de leur construction, on a décidé d'ajouter ces attributs dans le constructeur de Slime.java . De plus, on impose aux slimes de faire des allers-retours (en leur donne une position initiale et une position finale).
+- La taille de la clé a volontairement été imposée comme plus grande afin qu'elle soit plus visible.
+- Pour compliquer un peu le jeu, on impose un nombre limité de munitions. C'est-à-dire que le joueur, à chaque niveau, ne peut lancer que 15 fireballs, 4 grenades et 2 bombes.

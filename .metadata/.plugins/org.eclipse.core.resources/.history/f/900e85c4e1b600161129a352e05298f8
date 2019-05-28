@@ -1,0 +1,132 @@
+/*package platform.game;
+
+import platform.util.Box;
+import platform.util.Input;
+import platform.util.Sprite;
+import platform.util.Vector;
+import platform.util.Output;
+
+public class Fireball extends Actor {
+	private Actor owner:
+	private Vector position, velocity;
+	public static final int priority = 666;
+	public static final double SIZE = 0.4;
+
+	public Fireball(Vector position, Vector velocity, Actor owner) {
+		if (position == null || velocity == null) {
+			throw new NullPointerException();
+		}
+		this.position = position;
+		this.velocity = velocity;
+		this.owner = owner;
+	}
+
+	public Vector getPosition() {
+		return position;
+	}
+
+	public Vector getVelocity() {
+		return velocity;
+	}
+
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public Box getBox() {
+		// position est l'attribut position de l'objet
+		// SIZE une constante choisie pour la taille , par exemple 0.4
+		return new Box(position, SIZE, SIZE);
+	}
+
+	@Override
+	public void update(Input input) {
+		super.update(input);
+		double delta = input.getDeltaTime();
+		World world = getWorld();
+		Vector acceleration = world.getGravity();
+		velocity = velocity.add(acceleration.mul(delta));
+		position = position.add(velocity.mul(delta));
+	}
+
+	// Pour interact, on doit mettre equals, de sorte à ce que les boules de feu
+	// ne blessent pas notre joueur, à savoir celui que j'ai appellé "someone"
+	// dans le constructeur de Fireball
+}
+*/
+package platform.game;
+
+//import java.util.Vector;
+import platform.util.Box;
+import platform.util.Input;
+import platform.util.Output;
+import platform.util.Sprite;
+import platform.util.Vector;
+
+public class Fireball extends Actor {
+	// private Actor devil;
+	private Vector position;
+	private Vector velocity;
+	//private Actor owner;
+	private final int priority = 666;
+
+	public Fireball(Vector position, Vector velocity) {
+		if (position == null || velocity == null) {
+			throw new NullPointerException();
+		} else {
+			this.position = position;
+			this.velocity = velocity;
+			//this.owner = owner;
+		}
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public Box getBox() {
+		// position est l'attribut position de l'objet
+		// SIZE une constante choisie pour la taille , par exemple
+		double SIZE = 0.4;
+		return new Box(position, SIZE, SIZE);
+	}
+
+	@Override
+	public void update(Input input) {
+		super.update(input);
+		double delta = input.getDeltaTime();
+		Vector acceleration = new Vector(0.0, -9.81);
+		velocity = velocity.add(acceleration.mul(delta));
+		position = position.add(velocity.mul(delta));
+	}
+
+	public void draw(Input input, Output output) {
+		// Sprite sprite=getWorld().getLoader().getSprite("fireball");
+		Sprite sprite = getSprite("fireball");
+		if (sprite == null) {
+			super.draw(input, output);
+		} else {
+			output.drawSprite(sprite, getBox(), input.getTime());
+		}
+
+	}
+
+	@Override
+	public void interact(Actor other) {
+		super.interact(other);
+		if (other.isSolid()) {
+			Vector delta = other.getBox().getCollision(position);
+			if (delta != null) {
+				position = position.add(delta);
+				velocity = velocity.mirrored(delta);
+			}
+		}
+		/*if (!other.equals(owner) && other.getBox().isColliding(getBox())
+				&& other.hurt(this, Damage.FIRE, 1.0, getPosition())) {
+			getWorld().unregister(this);
+		}*/
+	}
+}

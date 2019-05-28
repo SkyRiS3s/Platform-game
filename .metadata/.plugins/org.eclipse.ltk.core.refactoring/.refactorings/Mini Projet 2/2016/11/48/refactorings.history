@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Encapsulate field &apos;platform.game.Simulator.next&apos; in &apos;platform.game.Simulator&apos;&#x0D;&#x0A;- Original project: &apos;Mini Projet 2&apos;&#x0D;&#x0A;- Original element: &apos;platform.game.Simulator.next&apos;&#x0D;&#x0A;- Getter method name: &apos;getNext&apos;&#x0D;&#x0A;- Setter method name: &apos;setNext&apos;&#x0D;&#x0A;- Field visibility: &apos;public&apos;&#x0D;&#x0A;- Use getter and setter methods in declaring type" comments="false" declaring="true" description="Encapsulate field &apos;next&apos;" flags="589830" getter="getNext" id="org.eclipse.jdt.ui.self.encapsulate" input="/src&lt;platform.game{Simulator.java[Simulator^next" insertion="7" setter="setNext" stamp="1480437104866" version="1.0" visibility="1"/>
+</session>
